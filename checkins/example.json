@@ -1,0 +1,13 @@
+{
+  "date": "2026-03-15",
+  "users": [
+    {
+      "github": "username",
+      "content": "今天学习了 React Hooks 的使用方法，包括 useState、useEffect 和自定义 Hook 的创建。还学习了 TypeScript 在 React 项目中的应用。",
+      "images": [
+        "https://raw.githubusercontent.com/owner/repo/main/assets/images/2026-03-15-abc123.png"
+      ],
+      "timestamp": "2026-03-15T10:30:00.000Z"
+    }
+  ]
+}
