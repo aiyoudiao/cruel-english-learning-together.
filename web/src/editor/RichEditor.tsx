@@ -6,6 +6,10 @@ import Placeholder from '@tiptap/extension-placeholder';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { common, createLowlight } from 'lowlight';
 import { useEffect, useCallback, useState } from 'react';
+import { 
+  Bold, Italic, Code, Heading1, Heading2, List, ListOrdered, Quote, 
+  Image as ImageIcon, Video, Music, Trash2, Maximize2, Minimize2 
+} from 'lucide-react';
 import './RichEditor.css';
 
 const lowlight = createLowlight(common);
@@ -48,6 +52,8 @@ const MenuButton = ({
     {children}
   </button>
 );
+
+import { createPortal } from 'react-dom';
 
 export function RichEditor({
   content,
@@ -209,32 +215,32 @@ export function RichEditor({
     return <div className="p-8 text-center text-gray-500 animate-pulse">Initializing Neural Interface...</div>;
   }
 
-  return (
+  const editorContent = (
     <div className={`flex flex-col bg-black/30 border border-white/10 rounded-xl overflow-hidden backdrop-blur-sm transition-all duration-300 ${
-      isFullscreen ? 'fixed inset-0 z-50 bg-gray-900/95 m-0 rounded-none' : ''
+      isFullscreen ? 'fixed inset-0 z-[9999] bg-gray-900 m-0 rounded-none w-screen h-screen' : ''
     }`}>
       {/* Toolbar */}
-      <div className="flex flex-wrap gap-1 p-2 bg-white/5 border-b border-white/5 items-center">
+      <div className="flex flex-wrap gap-1 p-2 bg-white/5 border-b border-white/5 items-center sticky top-0 z-10 backdrop-blur-md">
         <MenuButton
           onClick={() => editor.chain().focus().toggleBold().run()}
           active={editor.isActive('bold')}
           title="Bold"
         >
-          <span className="font-bold">B</span>
+          <Bold size={18} />
         </MenuButton>
         <MenuButton
           onClick={() => editor.chain().focus().toggleItalic().run()}
           active={editor.isActive('italic')}
           title="Italic"
         >
-          <span className="italic">I</span>
+          <Italic size={18} />
         </MenuButton>
         <MenuButton
           onClick={() => editor.chain().focus().toggleCode().run()}
           active={editor.isActive('code')}
           title="Code"
         >
-          <span className="font-mono text-xs">{'<>'}</span>
+          <Code size={18} />
         </MenuButton>
         
         <div className="w-px h-6 bg-white/10 mx-1 self-center" />
@@ -244,14 +250,14 @@ export function RichEditor({
           active={editor.isActive('heading', { level: 1 })}
           title="H1"
         >
-          H1
+          <Heading1 size={18} />
         </MenuButton>
         <MenuButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           active={editor.isActive('heading', { level: 2 })}
           title="H2"
         >
-          H2
+          <Heading2 size={18} />
         </MenuButton>
 
         <div className="w-px h-6 bg-white/10 mx-1 self-center" />
@@ -261,35 +267,35 @@ export function RichEditor({
           active={editor.isActive('bulletList')}
           title="Bullet List"
         >
-          •
+          <List size={18} />
         </MenuButton>
         <MenuButton
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           active={editor.isActive('orderedList')}
           title="Ordered List"
         >
-          1.
+          <ListOrdered size={18} />
         </MenuButton>
         <MenuButton
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           active={editor.isActive('blockquote')}
           title="Quote"
         >
-          "
+          <Quote size={18} />
         </MenuButton>
 
         <div className="w-px h-6 bg-white/10 mx-1 self-center" />
 
         <label className="cursor-pointer p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-all" title="Upload Image">
-          📷
+          <ImageIcon size={18} />
           <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
         </label>
         <label className="cursor-pointer p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-all" title="Upload Video">
-          🎬
+          <Video size={18} />
           <input type="file" accept="video/*" onChange={handleVideoUpload} className="hidden" />
         </label>
         <label className="cursor-pointer p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-all" title="Upload Audio">
-          🎵
+          <Music size={18} />
           <input type="file" accept="audio/*" onChange={handleAudioUpload} className="hidden" />
         </label>
 
@@ -299,7 +305,7 @@ export function RichEditor({
           onClick={clearContent}
           title="Clear Content"
         >
-          🗑️
+          <Trash2 size={18} />
         </MenuButton>
         
         <MenuButton
@@ -307,14 +313,20 @@ export function RichEditor({
           active={isFullscreen}
           title={isFullscreen ? "Exit Fullscreen (Esc)" : "Enter Fullscreen"}
         >
-          {isFullscreen ? '↙️' : '↗️'}
+          {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
         </MenuButton>
       </div>
 
       {/* Editor Content */}
-      <div className={`p-4 ${isFullscreen ? 'flex-1 overflow-auto max-w-4xl mx-auto w-full' : 'min-h-[300px]'}`}>
-        <EditorContent editor={editor} />
+      <div className={`p-4 ${isFullscreen ? 'flex-1 overflow-y-auto w-full h-full max-w-5xl mx-auto' : 'min-h-[300px]'}`}>
+        <EditorContent editor={editor} className="h-full" />
       </div>
     </div>
   );
+
+  if (isFullscreen) {
+    return createPortal(editorContent, document.body);
+  }
+
+  return editorContent;
 }

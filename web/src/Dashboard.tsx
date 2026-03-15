@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { GitHubAPI, type GitHubConfig } from './githubApi';
 import { UICard } from './components/ui/UICard';
+import { 
+  CheckCircle, Flame, Zap, Target, PieChart, Trophy, Activity, Calendar, Tag
+} from 'lucide-react';
 
 interface UserStats {
   username: string;
@@ -107,28 +110,36 @@ export function Dashboard({ config, username }: { config: GitHubConfig; username
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <UICard className="flex flex-col items-center justify-center space-y-2 border-solana-primary/30 relative overflow-hidden group">
           <div className="absolute inset-0 bg-solana-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-          <span className="text-gray-400 text-xs font-mono tracking-wider">累计打卡</span>
+          <span className="text-gray-400 text-xs font-mono tracking-wider flex items-center gap-1">
+            <CheckCircle size={14} /> 累计打卡
+          </span>
           <span className="text-4xl font-bold text-white shadow-neon-purple drop-shadow-md font-mono">
             {currentUserStats.totalCheckins}
           </span>
         </UICard>
         <UICard className="flex flex-col items-center justify-center space-y-2 border-solana-secondary/30 relative overflow-hidden group">
           <div className="absolute inset-0 bg-solana-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-          <span className="text-gray-400 text-xs font-mono tracking-wider">当前连续天数</span>
+          <span className="text-gray-400 text-xs font-mono tracking-wider flex items-center gap-1">
+            <Flame size={14} /> 当前连续天数
+          </span>
           <span className="text-4xl font-bold text-solana-secondary font-mono">
-            {currentUserStats.currentStreak} 🔥
+            {currentUserStats.currentStreak}
           </span>
         </UICard>
         <UICard className="flex flex-col items-center justify-center space-y-2 border-cyberpunk-pink/30 relative overflow-hidden group">
           <div className="absolute inset-0 bg-cyberpunk-pink/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-          <span className="text-gray-400 text-xs font-mono tracking-wider">最长连续天数</span>
+          <span className="text-gray-400 text-xs font-mono tracking-wider flex items-center gap-1">
+            <Zap size={14} /> 最长连续天数
+          </span>
           <span className="text-4xl font-bold text-cyberpunk-pink font-mono">
-            {currentUserStats.longestStreak} ⚡
+            {currentUserStats.longestStreak}
           </span>
         </UICard>
         <UICard className="flex flex-col items-center justify-center space-y-2 border-cyberpunk-yellow/30 relative overflow-hidden group">
           <div className="absolute inset-0 bg-cyberpunk-yellow/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-          <span className="text-gray-400 text-xs font-mono tracking-wider">核心领域</span>
+          <span className="text-gray-400 text-xs font-mono tracking-wider flex items-center gap-1">
+            <Target size={14} /> 核心领域
+          </span>
           <span className="text-2xl font-bold text-cyberpunk-yellow truncate max-w-full px-2">
             {getCategoryName(topCategory)}
           </span>
@@ -139,7 +150,7 @@ export function Dashboard({ config, username }: { config: GitHubConfig; username
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <UICard>
           <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-            <span className="w-2 h-2 bg-solana-primary rounded-full shadow-[0_0_8px_rgba(153,69,255,0.8)]"></span>
+            <PieChart className="text-solana-primary" size={20} />
             技能树分布
           </h3>
           <div className="space-y-5">
@@ -169,7 +180,7 @@ export function Dashboard({ config, username }: { config: GitHubConfig; username
 
         <UICard>
           <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-            <span className="w-2 h-2 bg-solana-secondary rounded-full shadow-[0_0_8px_rgba(20,241,149,0.8)]"></span>
+            <Trophy className="text-solana-secondary" size={20} />
             贡献排行榜
           </h3>
           <div className="space-y-3">
@@ -185,7 +196,14 @@ export function Dashboard({ config, username }: { config: GitHubConfig; username
                     `}>
                       {index + 1}
                     </span>
-                    <span className="font-medium text-gray-200 group-hover:text-white transition-colors">{user.username}</span>
+                    <a 
+                      href={`https://github.com/${user.username}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium text-gray-200 group-hover:text-white transition-colors hover:text-solana-primary"
+                    >
+                      {user.username}
+                    </a>
                   </div>
                   <div className="flex gap-4 text-xs font-mono">
                     <span className="text-solana-secondary flex items-center gap-1">
@@ -209,29 +227,53 @@ export function Dashboard({ config, username }: { config: GitHubConfig; username
       {/* Latest Checkins Feed */}
       <div className="mt-10">
         <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-          <span className="w-2 h-2 bg-cyberpunk-neon rounded-full shadow-[0_0_8px_rgba(0,240,255,0.8)]"></span>
+          <Activity className="text-cyberpunk-neon" size={20} />
           实时动态流
         </h3>
         <div className="grid gap-4">
           {data.latestCheckins.map((checkin, idx) => (
-            <UICard key={idx} className="border-l-2 border-l-cyberpunk-neon/50 hover:border-l-cyberpunk-neon transition-colors" hover={false}>
-              <div className="flex justify-between items-start mb-3">
+            <UICard key={idx} className="group border-l-2 border-l-cyberpunk-neon/50 hover:border-l-cyberpunk-neon transition-all hover:bg-white/5" hover={false}>
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-3 gap-2">
                 <div className="flex items-center gap-3">
-                  <span className="font-bold text-white text-sm">{checkin.username}</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-gray-300">
-                    {getCategoryName(checkin.category)}
-                  </span>
+                  <a
+                    href={`https://github.com/${checkin.username}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-8 h-8 rounded-full bg-gradient-to-tr from-solana-primary to-solana-secondary flex items-center justify-center text-white font-bold text-xs shadow-lg hover:scale-105 transition-transform"
+                  >
+                    {checkin.username.slice(0, 2).toUpperCase()}
+                  </a>
+                  <div>
+                    <a
+                      href={`https://github.com/${checkin.username}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-bold text-white text-sm block hover:text-solana-primary transition-colors"
+                    >
+                      {checkin.username}
+                    </a>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-gray-300 inline-block mt-1">
+                      {getCategoryName(checkin.category)}
+                    </span>
+                  </div>
                 </div>
-                <span className="text-[10px] text-gray-500 font-mono opacity-70">{checkin.date}</span>
+                <span className="text-[10px] text-gray-500 font-mono opacity-70 flex items-center gap-1 bg-black/20 px-2 py-1 rounded">
+                  <Calendar size={10} />
+                  {checkin.date}
+                </span>
               </div>
-              <div className="text-gray-300 text-sm leading-relaxed line-clamp-2 pl-1 border-l-2 border-white/5">
-                {checkin.content_md.replace(/[#*`]/g, '')}
+              
+              <div className="text-gray-300 text-sm leading-relaxed pl-3 border-l-2 border-white/5 my-3 font-light">
+                {checkin.content_md.replace(/[#*`]/g, '').slice(0, 150)}
+                {checkin.content_md.length > 150 && '...'}
               </div>
+
               {checkin.tags && checkin.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-4">
+                <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-white/5">
                   {checkin.tags.map(tag => (
-                    <span key={tag} className="text-[10px] text-solana-primary bg-solana-primary/10 px-1.5 py-0.5 rounded opacity-80 hover:opacity-100 transition-opacity">
-                      #{tag}
+                    <span key={tag} className="text-[10px] text-solana-primary bg-solana-primary/10 px-2 py-1 rounded-md opacity-80 hover:opacity-100 transition-opacity flex items-center gap-1">
+                      <Tag size={8} />
+                      {tag}
                     </span>
                   ))}
                 </div>

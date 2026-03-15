@@ -9,6 +9,11 @@ import { UICard } from './components/ui/UICard';
 import { UIInput } from './components/ui/UIInput';
 import { useLocalDraft } from './hooks/useLocalDraft';
 import { useGitHubConfig } from './hooks/useGitHubConfig';
+import { 
+  Sun, Moon, GraduationCap, Settings, User, PenTool, LayoutDashboard, 
+  Save, AlertCircle, CheckCircle, Type, Target, FileText, Tag, Send,
+  Link as LinkIcon
+} from 'lucide-react';
 import './App.css';
 
 // 映射分类名称到中文
@@ -224,12 +229,14 @@ function App() {
         {/* Header */}
         <header className="flex justify-between items-center py-2">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-solana-primary to-solana-secondary animate-pulse-slow tracking-tight">
+            <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-solana-primary to-solana-secondary animate-pulse-slow tracking-tight flex items-center">
+              <GraduationCap className="mr-3" size={36} />
               残酷共学 (Cruel Co-learning)
             </h1>
-            <p className="text-gray-500 mt-2 font-mono text-xs md:text-sm tracking-wide">Stay Hungry, Stay Foolish.</p>
+            <p className="text-gray-500 mt-2 font-mono text-xs md:text-sm tracking-wide ml-12">Stay Hungry, Stay Foolish.</p>
           </div>
-          <UIButton variant="outline" size="sm" onClick={toggleTheme} className="font-mono text-xs">
+          <UIButton variant="outline" size="sm" onClick={toggleTheme} className="font-mono text-xs flex items-center gap-2">
+            {theme === 'light' ? <Sun size={14} /> : <Moon size={14} />}
             主题: {theme}
           </UIButton>
         </header>
@@ -237,24 +244,24 @@ function App() {
         {/* Config Section */}
         <UICard className="space-y-4">
           <h2 className="text-lg font-bold text-solana-primary mb-4 flex items-center gap-2">
-            <span className="w-1.5 h-6 bg-solana-primary rounded-full"/>
+            <LinkIcon className="w-5 h-5" />
             连接配置
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <UIInput
-              label="仓库所有者 (Owner)"
+              label={<span className="flex items-center gap-2"><User size={14} /> 仓库所有者 (Owner)</span>}
               placeholder="github-username"
               value={owner}
               onChange={(e) => updateConfig({ owner: e.target.value })}
             />
             <UIInput
-              label="仓库名称 (Repo)"
+              label={<span className="flex items-center gap-2"><Settings size={14} /> 仓库名称 (Repo)</span>}
               placeholder="study-tracker"
               value={repo}
               onChange={(e) => updateConfig({ repo: e.target.value })}
             />
             <UIInput
-              label="访问令牌 (Token)"
+              label={<span className="flex items-center gap-2"><Settings size={14} /> 访问令牌 (Token)</span>}
               type="password"
               placeholder="ghp_..."
               value={token}
@@ -269,8 +276,9 @@ function App() {
             variant={view === 'checkin' ? 'primary' : 'ghost'} 
             onClick={() => setView('checkin')}
             glow={view === 'checkin'}
-            className="rounded-b-none border-b-2 border-transparent hover:border-solana-primary"
+            className="rounded-b-none border-b-2 border-transparent hover:border-solana-primary flex items-center gap-2"
           >
+            <PenTool size={18} />
             打卡登记
           </UIButton>
           <UIButton 
@@ -278,8 +286,9 @@ function App() {
             onClick={() => setView('dashboard')}
             disabled={!ghConfig || !username}
             glow={view === 'dashboard'}
-            className="rounded-b-none border-b-2 border-transparent hover:border-solana-primary"
+            className="rounded-b-none border-b-2 border-transparent hover:border-solana-primary flex items-center gap-2"
           >
+            <LayoutDashboard size={18} />
             数据仪表盘
           </UIButton>
         </div>
@@ -292,16 +301,16 @@ function App() {
               <div className="flex justify-between items-center mb-6 pb-4 border-b border-white/5">
                 <div className="flex items-center gap-2">
                   {draftStatus && (
-                    <span className={`text-[10px] font-mono px-2 py-1 rounded border uppercase tracking-wider ${
+                    <span className={`text-[10px] font-mono px-2 py-1 rounded border uppercase tracking-wider flex items-center gap-1 ${
                       draftStatus === 'saved' ? 'text-solana-secondary border-solana-secondary/50 bg-solana-secondary/10' :
                       draftStatus === 'saving' ? 'text-cyberpunk-yellow border-cyberpunk-yellow/50 bg-cyberpunk-yellow/10' :
                       draftStatus === 'restored' ? 'text-cyberpunk-neon border-cyberpunk-neon/50 bg-cyberpunk-neon/10' :
                       'text-gray-400 border-gray-600'
                     }`}>
-                      {draftStatus === 'saved' && '草稿已保存'}
-                      {draftStatus === 'saving' && '正在保存...'}
-                      {draftStatus === 'restored' && '草稿已恢复'}
-                      {draftStatus === 'unsaved' && '有未保存更改'}
+                      {draftStatus === 'saved' && <><CheckCircle size={10} /> 草稿已保存</>}
+                      {draftStatus === 'saving' && <><div className="animate-spin"><Settings size={10} /></div> 正在保存...</>}
+                      {draftStatus === 'restored' && <><CheckCircle size={10} /> 草稿已恢复</>}
+                      {draftStatus === 'unsaved' && <><AlertCircle size={10} /> 有未保存更改</>}
                     </span>
                   )}
                 </div>
@@ -312,7 +321,7 @@ function App() {
                   }) && setDraftStatus('saved')}
                   className="text-xs text-gray-500 hover:text-white transition-colors flex items-center gap-1"
                 >
-                  <span className="w-2 h-2 rounded-full bg-gray-500 hover:bg-white"></span>
+                  <Save size={12} />
                   强制保存
                 </button>
               </div>
@@ -320,14 +329,14 @@ function App() {
               <form onSubmit={handleSubmit} className="space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <UIInput
-                    label="GitHub 用户名"
+                    label={<span className="flex items-center gap-2"><User size={14} /> GitHub 用户名</span>}
                     value={username}
                     onChange={(e) => updateConfig({ username: e.target.value })}
                     placeholder="输入你的 GitHub 用户名"
                     required
                   />
                   <UIInput
-                    label="今日主题"
+                    label={<span className="flex items-center gap-2"><Type size={14} /> 今日主题</span>}
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="今天死磕了什么？"
@@ -336,7 +345,9 @@ function App() {
                 </div>
 
                 <div className="flex flex-col gap-3">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">选择战场</label>
+                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                    <Target size={14} /> 选择战场
+                  </label>
                   <div className="flex flex-wrap gap-3">
                     {CATEGORIES.map(cat => (
                       <button
@@ -358,7 +369,9 @@ function App() {
 
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">详细记录</label>
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                      <FileText size={14} /> 详细记录
+                    </label>
                     <button
                       type="button"
                       onClick={() => setPreviewMode(!previewMode)}
@@ -388,7 +401,7 @@ function App() {
                 </div>
 
                 <UIInput
-                  label="标签 (逗号分隔)"
+                  label={<span className="flex items-center gap-2"><Tag size={14} /> 标签 (逗号分隔)</span>}
                   placeholder="react, typescript, design"
                   value={tags}
                   onChange={(e) => setTags(e.target.value)}
@@ -401,6 +414,7 @@ function App() {
                     disabled={loading || (!content || (content.replace(/<[^>]+>/g, '').trim().length === 0 && !content.includes('<img') && !content.includes('<video') && !content.includes('<audio')))}
                     glow={!(!content || (content.replace(/<[^>]+>/g, '').trim().length === 0 && !content.includes('<img') && !content.includes('<video') && !content.includes('<audio')))}
                   >
+                    <Send size={20} className="mr-2" />
                     {loading ? '正在提交...' : ((!content || (content.replace(/<[^>]+>/g, '').trim().length === 0 && !content.includes('<img') && !content.includes('<video') && !content.includes('<audio'))) ? '内容为空，无法提交' : '提交打卡')}
                   </UIButton>
                 </div>
