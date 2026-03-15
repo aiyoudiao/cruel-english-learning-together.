@@ -64,10 +64,6 @@ function App() {
       if (!token || !owner || !repo || !username || !navigator.onLine) return;
       
       // Check if content is empty (simple check)
-      // We check the state 'content' directly. 
-      // Note: If content is stale in closure, it might be issue, but useEffect runs when deps change.
-      // However, we don't want to run this effect when 'content' changes (would cause typing loop).
-      // So we rely on the value at the moment category/username changes.
       const isContentEmpty = !content || content === '<p></p>' || content.trim() === '';
       if (!isContentEmpty) return;
 
@@ -76,25 +72,22 @@ function App() {
         const existing = await api.getUserCheckin(username, category);
         
         if (existing) {
-            // Found existing checkin for today
             if (existing.title) setTitle(existing.title);
             if (existing.content_md) setContent(existing.content_md);
             if (existing.tags) setTags(existing.tags.join(', '));
             if (existing.assets) setAssets(existing.assets);
             
             setMessage(`已自动加载今日在【${CATEGORY_MAP[category] || category}】的打卡记录`);
-            // Clear message after 3s
             setTimeout(() => setMessage(''), 3000);
         }
       } catch (e) {
-        // Silent fail or debug log
         console.debug("No existing checkin found or error loading", e);
       }
     };
 
     loadTodayCheckin();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category, username, owner, repo, token]); // Intentionally exclude 'content' to avoid loop
+  }, [category, username, owner, repo, token]); 
 
   // Auto-save draft
   useEffect(() => {
@@ -194,7 +187,7 @@ function App() {
         ''
       );
       
-      setMessage('打卡成功！');
+      setMessage('打卡成功！坚持就是胜利！');
       // Clear form and draft
       setTitle('');
       setContent('');
@@ -227,9 +220,9 @@ function App() {
         <header className="flex justify-between items-center py-2">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-solana-primary to-solana-secondary animate-pulse-slow tracking-tight">
-              GitHub 学习打卡助手
+              残酷共学 (Cruel Co-learning)
             </h1>
-            <p className="text-gray-500 mt-2 font-mono text-xs md:text-sm tracking-wide">v4.0 学习版</p>
+            <p className="text-gray-500 mt-2 font-mono text-xs md:text-sm tracking-wide">Stay Hungry, Stay Foolish.</p>
           </div>
           <UIButton variant="outline" size="sm" onClick={toggleTheme} className="font-mono text-xs">
             主题: {theme}
@@ -329,16 +322,16 @@ function App() {
                     required
                   />
                   <UIInput
-                    label="学习主题"
+                    label="今日主题"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="今天学习了什么？"
+                    placeholder="今天死磕了什么？"
                     required
                   />
                 </div>
 
                 <div className="flex flex-col gap-3">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">分类领域</label>
+                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">选择战场</label>
                   <div className="flex flex-wrap gap-3">
                     {CATEGORIES.map(cat => (
                       <button
@@ -360,7 +353,7 @@ function App() {
 
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">详细内容</label>
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">详细记录</label>
                     <button
                       type="button"
                       onClick={() => setPreviewMode(!previewMode)}
@@ -383,7 +376,7 @@ function App() {
                         onImageUpload={(f) => handleAssetUpload(f, 'image')}
                         onVideoUpload={(f) => handleAssetUpload(f, 'video')}
                         onAudioUpload={(f) => handleAssetUpload(f, 'audio')}
-                        placeholder="记录你的学习历程..."
+                        placeholder="记录你的残酷学习历程..."
                       />
                     </div>
                   )}
@@ -403,7 +396,7 @@ function App() {
                     disabled={loading}
                     glow
                   >
-                    {loading ? '正在提交打卡...' : '提交学习打卡'}
+                    {loading ? '正在提交...' : '提交打卡'}
                   </UIButton>
                 </div>
 

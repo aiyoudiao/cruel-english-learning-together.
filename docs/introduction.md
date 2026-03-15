@@ -1,6 +1,7 @@
-# GitHub 学习打卡助手 (Project Introduction)
+# 残酷共学项目 (Cruel Co-learning)
 
-一个完全基于 GitHub 构建的进阶学习追踪平台，具备草稿持久化和离线适应性。
+本项目灵感来源于 [残酷共学 (Intensive Co-learning)](https://intensivecolearn.ing/programs/english_4th)。
+这是一个基于 GitHub 的开源学习追踪平台，旨在帮助学习者通过“残酷”的坚持和公开记录，共同完成高强度的学习挑战。
 
 ## 🌟 核心特性 (V4 学习版)
 
