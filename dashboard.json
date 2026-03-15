@@ -1,38 +1,6 @@
 {
-  "leaderboard": [
-    {
-      "username": "aiyoudiao",
-      "total": 1,
-      "currentStreak": 1,
-      "longestStreak": 1,
-      "AI": 0,
-      "Frontend": 0,
-      "English": 1,
-      "Math": 0,
-      "Reading": 0
-    }
-  ],
-  "latestCheckins": [
-    {
-      "date": "2026-03-15",
-      "username": "aiyoudiao",
-      "title": "english",
-      "category": "English",
-      "content_md": "<p>学习 30 个单词<br><br><img src=\"https://raw.githubusercontent.com/aiyoudiao/cruel-learning-together./main/assets/images/2026-03-15-owbt21bhwcb.jpg\"></p>",
-      "tags": [],
-      "timestamp": "2026-03-15T20:39:17.620Z"
-    }
-  ],
-  "users": {
-    "aiyoudiao": {
-      "username": "aiyoudiao",
-      "totalCheckins": 1,
-      "currentStreak": 1,
-      "longestStreak": 1,
-      "categories": {
-        "English": 1
-      }
-    }
-  },
-  "generatedAt": "2026-03-15T20:39:27.198478"
+  "leaderboard": [],
+  "latestCheckins": [],
+  "users": {},
+  "generatedAt": "2026-03-15T21:11:27.046009"
 }
