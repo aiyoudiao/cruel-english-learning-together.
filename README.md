@@ -1,74 +1,19 @@
-# GitHub Study OS V4 - Persistence Edition
+# GitHub 学习打卡助手
 
-An advanced learning tracking platform built entirely on top of GitHub, featuring draft persistence and offline resilience.
+欢迎来到残酷英语共学（Cruel English Learning Together）项目！
+这是一个基于 GitHub 的学习追踪平台，帮助你记录每天的学习进度。
 
-## 🌟 Version 4 Features
+## 📚 文档
 
-- **Draft Persistence**: Never lose your work. Drafts are automatically saved to local storage.
-- **Auto-Save**: Changes are saved every second (debounced).
-- **Offline Mode**: Continue writing drafts and attaching assets even when offline.
-- **Resilient Editing**: Session recovery ensures you pick up exactly where you left off.
-- **Draft Indicators**: Visual feedback for save status.
+- [项目介绍](docs/introduction.md)
+- [系统架构](docs/architecture.md)
+- [版本历史](docs/versions.md)
 
-## 🏗 System Architecture
+## 🏆 排行榜 (Leaderboard)
 
-```mermaid
-graph TD
-    User[User] -->|Type| App[Web App]
-    App -->|Auto Save| LocalStorage[Local Draft]
-    App -->|Upload Assets| GitHubAssets[GitHub Assets]
-    App -->|Submit| GitHubJSON[GitHub JSON Store]
-    LocalStorage -->|Restore| App
-    GitHubJSON -->|Trigger| Action[GitHub Action]
-    Action -->|Sync| Stats[Leaderboard & Reports]
-```
+| User | AI | Frontend | English | Math | Reading | Total |
+|---|---|---|---|---|---|---|
 
-## 💾 Draft System
+## 📅 最新动态 (Latest Check-ins)
 
-The draft system uses a custom React hook `useLocalDraft` to manage state synchronization with `localStorage`.
-
-### Key: `study-checkin-draft`
-
-Structure:
-```json
-{
-  "title": "Learning Rust",
-  "category": "Backend",
-  "tags": ["rust", "memory-safety"],
-  "content_md": "...",
-  "assets": ["..."],
-  "timestamp": "2024-03-16T10:00:00Z"
-}
-```
-
-### Behavior
-1.  **Auto Save**: Triggers 1s after last keystroke.
-2.  **Recovery**: On page load, checks for existing draft and restores UI.
-3.  **Reset**: Clears draft only after successful GitHub submission.
-
-## 🔌 Offline Capability
-
-- **Writing**: Full rich text editing works offline.
-- **Assets**: Images attached while offline are stored as Base64 data URIs in the draft content, allowing immediate preview.
-- **Submission**: Requires online connection.
-
-## 🎨 Theme System
-
-The system uses Tailwind CSS and CSS variables for theming.
-Themes are defined in `src/context/ThemeContext.tsx` and applied via `data-theme` attribute.
-
-- **Solana**: `#9945FF` (Purple) & `#14F195` (Green)
-- **Cyberpunk**: `#00F0FF` (Cyan) & `#FF003C` (Pink) & `#FTEE0E` (Yellow)
-
-## 🚀 Getting Started
-
-1.  Clone repository.
-2.  `cd web`
-3.  `npm install`
-4.  `npm run dev`
-
-## 🛠 Tech Stack
-
-- **Frontend**: React, Vite, TailwindCSS, TipTap
-- **Backend**: GitHub API, GitHub Actions
-- **Persistence**: LocalStorage, GitHub Repo
+No recent check-ins
