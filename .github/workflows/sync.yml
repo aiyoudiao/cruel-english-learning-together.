@@ -35,7 +35,11 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add README.md users/ dashboard.json
+          git add README.md dashboard.json
+          # Only add users directory if it exists and is not empty
+          if [ -d "users" ] && [ "$(ls -A users)" ]; then
+            git add users/
+          fi
           git diff --staged --quiet || git commit -m "Auto-update statistics and user files"
       
       - name: Push changes

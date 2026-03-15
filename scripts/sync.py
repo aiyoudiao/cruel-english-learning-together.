@@ -311,8 +311,6 @@ def main():
     
     if not checkins:
         print("No check-ins found")
-        generate_dashboard_json({}, [], [])
-        return
     
     user_data = calculate_user_stats(checkins)
     print(f"Found {len(user_data)} users")
