@@ -67,7 +67,7 @@ export function Dashboard({ config, username }: { config: GitHubConfig; username
   };
 
   if (loading) {
-    return <div className="text-center p-8 text-solana-primary animate-pulse font-mono">正在连接神经元网络...</div>;
+    return <div className="text-center p-8 text-solana-primary animate-pulse font-mono">正在加载数据...</div>;
   }
 
   if (error) {
@@ -80,7 +80,7 @@ export function Dashboard({ config, username }: { config: GitHubConfig; username
   }
 
   if (!data) {
-    return <div className="text-center p-8 text-gray-400">矩阵中未发现数据痕迹。</div>;
+    return <div className="text-center p-8 text-gray-400">暂无数据。</div>;
   }
 
   const currentUserStats = data.users[username] || {
@@ -107,7 +107,7 @@ export function Dashboard({ config, username }: { config: GitHubConfig; username
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <UICard className="flex flex-col items-center justify-center space-y-2 border-solana-primary/30 relative overflow-hidden group">
           <div className="absolute inset-0 bg-solana-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-          <span className="text-gray-400 text-xs font-mono tracking-wider">总打卡次数</span>
+          <span className="text-gray-400 text-xs font-mono tracking-wider">累计打卡</span>
           <span className="text-4xl font-bold text-white shadow-neon-purple drop-shadow-md font-mono">
             {currentUserStats.totalCheckins}
           </span>

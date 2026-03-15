@@ -57,6 +57,45 @@ function App() {
     }
   }, [loadDraft]);
 
+  // Auto-load today's checkin when category/user changes
+  useEffect(() => {
+    const loadTodayCheckin = async () => {
+      // Only if we have config and username
+      if (!token || !owner || !repo || !username || !navigator.onLine) return;
+      
+      // Check if content is empty (simple check)
+      // We check the state 'content' directly. 
+      // Note: If content is stale in closure, it might be issue, but useEffect runs when deps change.
+      // However, we don't want to run this effect when 'content' changes (would cause typing loop).
+      // So we rely on the value at the moment category/username changes.
+      const isContentEmpty = !content || content === '<p></p>' || content.trim() === '';
+      if (!isContentEmpty) return;
+
+      try {
+        const api = new GitHubAPI({ owner, repo, token });
+        const existing = await api.getUserCheckin(username, category);
+        
+        if (existing) {
+            // Found existing checkin for today
+            if (existing.title) setTitle(existing.title);
+            if (existing.content_md) setContent(existing.content_md);
+            if (existing.tags) setTags(existing.tags.join(', '));
+            if (existing.assets) setAssets(existing.assets);
+            
+            setMessage(`已自动加载今日在【${CATEGORY_MAP[category] || category}】的打卡记录`);
+            // Clear message after 3s
+            setTimeout(() => setMessage(''), 3000);
+        }
+      } catch (e) {
+        // Silent fail or debug log
+        console.debug("No existing checkin found or error loading", e);
+      }
+    };
+
+    loadTodayCheckin();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category, username, owner, repo, token]); // Intentionally exclude 'content' to avoid loop
+
   // Auto-save draft
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -155,7 +194,7 @@ function App() {
         ''
       );
       
-      setMessage('学习打卡铸造成功！');
+      setMessage('打卡成功！');
       // Clear form and draft
       setTitle('');
       setContent('');
@@ -188,9 +227,9 @@ function App() {
         <header className="flex justify-between items-center py-2">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-solana-primary to-solana-secondary animate-pulse-slow tracking-tight">
-              GitHub 学习操作系统
+              GitHub 学习打卡助手
             </h1>
-            <p className="text-gray-500 mt-2 font-mono text-xs md:text-sm tracking-wide">v4.0 // 持久化系统已激活</p>
+            <p className="text-gray-500 mt-2 font-mono text-xs md:text-sm tracking-wide">v4.0 学习版</p>
           </div>
           <UIButton variant="outline" size="sm" onClick={toggleTheme} className="font-mono text-xs">
             主题: {theme}
@@ -364,7 +403,7 @@ function App() {
                     disabled={loading}
                     glow
                   >
-                    {loading ? '正在铸造打卡记录...' : '铸造学习打卡'}
+                    {loading ? '正在提交打卡...' : '提交学习打卡'}
                   </UIButton>
                 </div>
 

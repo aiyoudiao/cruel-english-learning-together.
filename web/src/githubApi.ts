@@ -80,7 +80,38 @@ export class GitHubAPI {
     }
 
     const data = await response.json();
-    return atob(data.content);
+    // GitHub API returns content in base64, usually with newlines. 
+    // We should remove newlines before decoding just in case, though atob handles some.
+    // Also handle utf-8 characters correctly.
+    const rawContent = data.content.replace(/\n/g, '');
+    try {
+        return decodeURIComponent(escape(atob(rawContent)));
+    } catch (e) {
+        // Fallback for simple ascii
+        return atob(rawContent);
+    }
+  }
+
+  async getUserCheckin(
+    username: string,
+    category: string,
+    date: string = ''
+  ): Promise<CheckinData['users'][0] | null> {
+    const today = date || new Date().toISOString().split('T')[0];
+    const checkinPath = `checkins/${category}/${today}.json`;
+    
+    try {
+      const existingData = await this.getFile(checkinPath);
+      if (!existingData) return null;
+      
+      const checkinData: CheckinData = JSON.parse(existingData);
+      const userEntry = checkinData.users.find(u => u.github === username);
+      
+      return userEntry || null;
+    } catch (error) {
+      console.warn(`Error fetching checkin for ${username} on ${today}:`, error);
+      return null;
+    }
   }
 
   async submitCheckin(

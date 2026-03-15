@@ -3,6 +3,7 @@ import os
 from datetime import datetime, timedelta
 from pathlib import Path
 from collections import defaultdict
+import re
 
 CHECKINS_DIR = Path("checkins")
 USERS_DIR = Path("users")
@@ -20,6 +21,14 @@ def load_checkins():
     
     # Recursively find all json files
     for file_path in CHECKINS_DIR.rglob("*.json"):
+        # Ignore example.json or non-date files
+        if file_path.name == "example.json":
+            continue
+            
+        # Optional: Check if filename matches YYYY-MM-DD.json pattern
+        if not re.match(r'\d{4}-\d{2}-\d{2}\.json', file_path.name):
+            continue
+
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
@@ -51,6 +60,7 @@ def calculate_user_stats(checkins):
             user_data[username]['history'].append({
                 'date': date,
                 'category': category,
+                'title': user.get('title', ''),
                 'content_md': user.get('content_md', user.get('content', '')),
                 'assets': user.get('assets', []),
                 'tags': user.get('tags', []),
@@ -121,7 +131,8 @@ def generate_user_markdown(username, user_data):
     sorted_history = sorted(user_data['history'], key=lambda x: x['date'], reverse=True)
     
     for entry in sorted_history:
-        markdown += f"### {entry['date']} ({entry['category']})\n\n"
+        title_str = f" - {entry['title']}" if entry.get('title') else ""
+        markdown += f"### {entry['date']} ({entry['category']}){title_str}\n\n"
         if entry.get('tags'):
             tags_str = ", ".join([f"`{t}`" for t in entry['tags']])
             markdown += f"Tags: {tags_str}\n\n"
@@ -207,7 +218,9 @@ def update_readme(leaderboard, latest_checkins):
             for user in checkin['users']:
                 content = user.get('content_md', user.get('content', ''))
                 cat = user.get('category', 'General')
-                latest_section += f"- **{user['github']}** ({cat}): {content[:100]}...\n"
+                title = user.get('title', '')
+                title_display = f"**{title}** - " if title else ""
+                latest_section += f"- **{user['github']}** ({cat}): {title_display}{content[:100]}...\n"
             latest_section += "\n"
     else:
         latest_section += "No recent check-ins\n"
@@ -237,16 +250,25 @@ def generate_dashboard_json(user_data, leaderboard, latest_checkins):
     }
     
     # Process latest checkins
-    for checkin in latest_checkins[:20]:
+    # Flatten the list of all checkins from all files
+    all_entries = []
+    for checkin in latest_checkins:
         for user in checkin['users']:
-            dashboard_data["latestCheckins"].append({
+            all_entries.append({
                 "date": checkin['date'],
                 "username": user['github'],
+                "title": user.get('title', ''),
                 "category": user.get('category', 'General'),
                 "content_md": user.get('content_md', user.get('content', '')),
                 "tags": user.get('tags', []),
                 "timestamp": user.get('timestamp', '')
             })
+            
+    # Sort all entries by timestamp if available, else by date
+    # Assuming timestamp is ISO string
+    all_entries.sort(key=lambda x: x.get('timestamp', x['date']), reverse=True)
+
+    dashboard_data["latestCheckins"] = all_entries[:20]
             
     # Process user stats
     for username, data in user_data.items():
@@ -273,8 +295,6 @@ def main():
     
     if not checkins:
         print("No check-ins found")
-        # Still generate empty dashboard if needed, or just return
-        # But better to generate empty json so frontend doesn't 404
         generate_dashboard_json({}, [], [])
         return
     
