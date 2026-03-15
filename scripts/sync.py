@@ -132,7 +132,15 @@ def generate_user_markdown(username, user_data):
     
     for entry in sorted_history:
         title_str = f" - {entry['title']}" if entry.get('title') else ""
-        markdown += f"### {entry['date']} ({entry['category']}){title_str}\n\n"
+        time_str = ""
+        if entry.get('timestamp'):
+            try:
+                dt = datetime.fromisoformat(entry['timestamp'].replace('Z', '+00:00'))
+                time_str = f" [{dt.strftime('%H:%M')}]"
+            except ValueError:
+                pass
+                
+        markdown += f"### {entry['date']} ({entry['category']}){time_str}{title_str}\n\n"
         if entry.get('tags'):
             tags_str = ", ".join([f"`{t}`" for t in entry['tags']])
             markdown += f"Tags: {tags_str}\n\n"
@@ -211,7 +219,7 @@ def update_readme(leaderboard, latest_checkins):
         row += f"{user['total']} |\n"
         leaderboard_table += row
     
-    latest_section = "## Latest Check-ins\n\n"
+    latest_section = "## 📅 实时动态 (Latest Check-ins)\n\n"
     if latest_checkins:
         for checkin in latest_checkins[:5]:
             latest_section += f"### {checkin['date']}\n\n"
@@ -220,19 +228,29 @@ def update_readme(leaderboard, latest_checkins):
                 cat = user.get('category', 'General')
                 title = user.get('title', '')
                 title_display = f"**{title}** - " if title else ""
-                latest_section += f"- **{user['github']}** ({cat}): {title_display}{content[:100]}...\n"
+                
+                time_str = ""
+                if user.get('timestamp'):
+                    try:
+                        dt = datetime.fromisoformat(user['timestamp'].replace('Z', '+00:00'))
+                        time_str = f" `{dt.strftime('%H:%M')}`"
+                    except ValueError:
+                        pass
+                
+                latest_section += f"- **{user['github']}** ({cat}){time_str}: {title_display}{content[:100]}...\n"
             latest_section += "\n"
     else:
         latest_section += "No recent check-ins\n"
     
-    if "## Leaderboard" in content:
+    if "## 🏆 残酷排行榜" in content:
+        pre_content = content.split("## 🏆 残酷排行榜")[0]
+        new_content = pre_content + "## 🏆 残酷排行榜 (Leaderboard)\n\n" + leaderboard_table + "\n" + latest_section
+    elif "## Leaderboard" in content:
         pre_content = content.split("## Leaderboard")[0]
-        new_content = pre_content + "## Leaderboard\n\n" + leaderboard_table + "\n" + latest_section
-    elif "## 排行榜" in content:
-        pre_content = content.split("## 排行榜")[0]
-        new_content = pre_content + "## Leaderboard\n\n" + leaderboard_table + "\n" + latest_section
+        new_content = pre_content + "## 🏆 残酷排行榜 (Leaderboard)\n\n" + leaderboard_table + "\n" + latest_section
     else:
-        new_content = content + "\n\n## Leaderboard\n\n" + leaderboard_table + "\n" + latest_section
+        # Fallback if no header found, append to end or replace old sections
+        new_content = content + "\n\n## 🏆 残酷排行榜 (Leaderboard)\n\n" + leaderboard_table + "\n" + latest_section
 
     with open(README_PATH, 'w', encoding='utf-8') as f:
         f.write(new_content)
